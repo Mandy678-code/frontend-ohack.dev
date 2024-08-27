@@ -402,7 +402,7 @@ export default function SuccessStories() {
                   )}
                   <TestimonialBox>
                     <Typography
-                      variant="body1"
+                      variant="body2"
                       style={{
                         fontSize: "1.1rem",
                       }}

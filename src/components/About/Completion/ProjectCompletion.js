@@ -18,7 +18,11 @@ import { initFacebookPixel, trackEvent } from "../../../lib/ga";
 const style = { fontSize: "15px" };
 
 const trackOnClickButtonClickWithGoogleAndFacebook = (buttonName) => {
-  trackEvent("click_project_completion_button", buttonName);
+  trackEvent({
+    action: "click_project_completion_button",
+    category: "project_completion",
+    label: buttonName,
+  });
 };
 
 const ProjectCompletion = () => {

@@ -61,7 +61,11 @@ const JudgeCTA = () => {
 };
 
 const trackOnClickButtonClickWithGoogleAndFacebook = (buttonName) => {
-    trackEvent("click_mentors", buttonName);
+    trackEvent({
+      action: "click_mentors",
+    category: "mentors",   
+    label: buttonName,
+    });    
 }
  
 const mentorGoogleForm = "https://forms.gle/WFBEwHVQcfpVXyYFA"

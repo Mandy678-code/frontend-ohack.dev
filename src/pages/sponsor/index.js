@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { TitleContainer, LayoutContainer, ProjectsContainer, LinkStyled, ButtonBasicStyle } from '../../styles/sponsors/styles';
+import React from 'react';
+import { TitleContainer, LayoutContainer, ProjectsContainer, LinkStyled } from '../../styles/sponsors/styles';
 import {
   Grid,
   Typography,
@@ -17,8 +17,6 @@ import Button from "@mui/material/Button";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import { initFacebookPixel, trackEvent } from "../../lib/ga";
 
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
@@ -32,12 +30,15 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import SponsorshipSlider from '../../components/Hackathon/SponsorshipSlider';
-// Import sponsorLevels and sponsors from data/sponsorData.js
-const { sponsorLevels, sponsors, calculateSupport } = require('../../data/sponsorData');
 
 const getContactLink = () => 'https://forms.gle/giowXMQ4h8h6XwVF8';
 
+const sponsors = [
+  { name: "Meta", logo: "https://i.imgur.com/v1qjSIO.png", hours: 150, donations: 1000, website: "https://meta.com" },
+  { name: "Spotify", logo: "https://i.imgur.com/r9qB2L4.png", hours: 150, donations: 0, website: "https://spotify.com" }
+];
 
+const calculateSupport = (hours, donations) => hours * 100 + donations;
 
 const benefitsData = [
   { benefit: 'Logo on website', innovator: '3 months', changemaker: '6 months', transformer: '1 year', visionary: '2 years' },
@@ -55,18 +56,16 @@ const benefitsData = [
   { benefit: 'Recruiting/interviews', innovator: '-', changemaker: 'Post-event', transformer: 'During & post', visionary: 'Pre, during & post' },    
 ];
 
-
+const sponsorLevels = [
+  { name: 'Innovator', color: '#C8E6C9', minSupport: 1000, minHours: 20 },
+  { name: 'Changemaker', color: '#BBDEFB', minSupport: 2500, minHours: 50 },
+  { name: 'Transformer', color: '#FFECB3', minSupport: 5000, minHours: 100 },
+  { name: 'Visionary', color: '#E1BEE7', minSupport: 10000, minHours: 200 },
+];
 
 export default function SponsorIndexList() {  
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const [selectedAmount, setSelectedAmount] = useState(0);
-
-  useEffect(() => {
-    initFacebookPixel();
-  }, []);
-
-
 
   const mobileStyle = { fontSize: '12px' };
   const desktopStyle = { fontSize: '14px' };
@@ -77,77 +76,66 @@ export default function SponsorIndexList() {
     fontWeight: 'bold', 
     backgroundColor: '#f0f0f0' 
   };
-
-  const gaButton = (category, action) => {
-    trackEvent( category, action );
-  };
-
-
+  // The sponsor boxes that display a sponsor
   const SponsorCard = ({ sponsor, level }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     return (
-      <Link href={sponsor.website} passHref>
-        <Paper
-          elevation={3}
-          component="a"
-          target="_blank"
-          rel="noopener noreferrer"
-          sx={{
-            p: 2,
-            display: "flex",
-            flexDirection: isMobile ? "column" : "row",
-            alignItems: "center",
-            gap: 2,
-            backgroundColor: level.color,
-            transition:
-              "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
-            "&:hover": {
-              transform: "translateY(-5px)",
-              boxShadow: 6,
-              cursor: "pointer",
-            },
-            textDecoration: "none",
-            color: "inherit",
-          }}
+      <Paper
+        elevation={3}
+        sx={{
+          p: 2,
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          alignItems: "center",
+          gap: 2,
+          backgroundColor: level.color,
+          transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
+          "&:hover": {
+            transform: "translateY(-5px)",
+            boxShadow: 6,
+          },
+        }}
+      >
+        <Avatar
+          src={sponsor.logo}
+          alt={sponsor.name}
+          sx={{ width: 80, height: 80, objectFit: "contain", bgcolor: "white" }}
+          variant="rounded"
+        />
+        <Box
+          sx={{ flexGrow: 1, display: "flex", flexDirection: "column", gap: 1 }}
         >
-          <Avatar
-            src={sponsor.logo}
-            alt={sponsor.name}
-            sx={{ width: 80, height: 80, bgcolor: "white" }}
-            variant="rounded"
-          />
-          <Box
-            sx={{
-              flexGrow: 1,
-              display: "flex",
-              flexDirection: "column",
-              gap: 1,
-            }}
-          >
-            <Typography variant="h6" noWrap>
-              {sponsor.name}
-            </Typography>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+          <Typography variant="h6" noWrap>
+            {sponsor.name}
+          </Typography>
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+            <Chip
+              icon={<AccessTimeIcon />}
+              label={`${sponsor.hours} hours`}
+              size="small"
+              color="primary"
+            />
+            {sponsor.donations > 0 && (
               <Chip
-                icon={<AccessTimeIcon />}
-                label={`${sponsor.hours} hours`}
+                icon={<AttachMoneyIcon />}
+                label={`$${sponsor.donations} donated`}
                 size="small"
-                color="primary"
+                color="secondary"
               />
-              {sponsor.donations > 0 && (
-                <Chip
-                  icon={<AttachMoneyIcon />}
-                  label={`$${sponsor.donations} donated`}
-                  size="small"
-                  color="secondary"
-                />
-              )}
-            </Box>
+            )}
           </Box>
-        </Paper>
-      </Link>
+        </Box>
+        <Tooltip title="Visit sponsor website">
+          <IconButton
+            aria-label="sponsor website"
+            onClick={() => window.open(sponsor.website, "_blank")}
+          >
+            <LinkIcon />
+          </IconButton>
+        </Tooltip>
+      </Paper>
     );
   };
   // get list of sponsors
@@ -182,7 +170,7 @@ export default function SponsorIndexList() {
               <Typography variant="h6" gutterBottom>
                 Be the first {level.name} sponsor!
               </Typography>
-              <Typography variant="body1" paragraph>
+              <Typography variant="body2" paragraph>
                 Support our mission by volunteering your time or making a
                 donation.
               </Typography>
@@ -313,18 +301,6 @@ export default function SponsorIndexList() {
         </Typography>
       </TitleContainer>
 
-      <Box mt={3} mb={3} display="flex" justifyContent="center">
-        <Button
-          variant="contained"
-          color="primary"
-          size={isMobile ? "medium" : "large"}
-          href="/hack/2024_fall"
-          startIcon={<CalendarTodayIcon />}
-        >
-          View Current Hackathon Details
-        </Button>
-      </Box>
-
       <ProjectsContainer>
         <Box mb={isMobile ? 3 : 6}>
           <Typography
@@ -340,19 +316,19 @@ export default function SponsorIndexList() {
               <Typography variant="body1" paragraph style={style}>
                 Opportunity Hack is a premier hackathon that brings together
                 talented students and professionals to create innovative
-                solutions for nonprofits. Our upcoming event is scheduled for
-                October 12th & 13th 2024 and will be in-person at ASU in Tempe,
-                Arizona.
+                solutions for nonprofits. Our most recent event was held on
+                October 7-8, 2023, both in-person at ASU Tempe and online
+                globally.
                 <br />
                 <Link
-                  href="/hack/2024_fall"
+                  href="/hack/2023_fall"
                   style={{ color: "blue", textDecoration: "underline" }}
                 >
-                  Learn more about our upcoming 2024 Fall Hackathon
+                  Learn more about our 2023 Fall Hackathon
                 </Link>
               </Typography>
               <Typography variant="body1" paragraph style={style}>
-                <strong>Key Statistics from 2023:</strong>
+                <strong>Key Statistics:</strong>
                 <ul>
                   <li>Over 300 participants</li>
                   <li>25 projects submitted</li>
@@ -418,7 +394,7 @@ export default function SponsorIndexList() {
                   <Typography variant="h6" style={style}>
                     Tech Giants
                   </Typography>
-                  <Typography variant="body1" style={style}>
+                  <Typography variant="body2" style={style}>
                     Meta, Spotify, PayPal, eBay
                   </Typography>
                 </CardContent>
@@ -430,7 +406,7 @@ export default function SponsorIndexList() {
                   <Typography variant="h6" style={style}>
                     Innovative Companies
                   </Typography>
-                  <Typography variant="body1" style={style}>
+                  <Typography variant="body2" style={style}>
                     Honeywell, World Wide Technology, Pixee
                   </Typography>
                 </CardContent>
@@ -442,7 +418,7 @@ export default function SponsorIndexList() {
                   <Typography variant="h6" style={style}>
                     Academic Institutions
                   </Typography>
-                  <Typography variant="body1" style={style}>
+                  <Typography variant="body2" style={style}>
                     Arizona State University, Rutgers, University of Toronto
                   </Typography>
                 </CardContent>
@@ -515,23 +491,7 @@ export default function SponsorIndexList() {
           <SponsorshipSlider
             sponsorLevels={sponsorLevels}
             isMobile={isMobile}
-            setSelectedAmount={setSelectedAmount}
           />
-          {selectedAmount > 0 && (
-            <Box mt={2}>
-              <Typography variant="h6" gutterBottom>
-                Donate ${selectedAmount} via PayPal:
-              </Typography>
-              <ButtonBasicStyle
-                onClick={() => gaButton("button_donate", "donate")}
-                style={{ color: "white", backgroundColor: "blue" }}
-                target="_blank"
-                href="https://www.paypal.com/donate/?campaign_id=WWL4VPVBUS4SA"
-              >
-                Donate with PayPal
-              </ButtonBasicStyle>
-            </Box>
-          )}
         </Box>
 
         <Box mt={isMobile ? 3 : 6}>
@@ -686,7 +646,7 @@ export default function SponsorIndexList() {
                   >
                     Matthews Crossing Food Bank
                   </Typography>
-                  <Typography variant="body1" paragraph style={style}>
+                  <Typography variant="body2" paragraph style={style}>
                     Streamlined donation tracking system, saving hundreds of
                     volunteer hours annually.
                   </Typography>
@@ -713,7 +673,7 @@ export default function SponsorIndexList() {
                   >
                     Zuri's Circle
                   </Typography>
-                  <Typography variant="body1" paragraph style={style}>
+                  <Typography variant="body2" paragraph style={style}>
                     Developed an event management system, increasing volunteer
                     engagement by 40%.
                   </Typography>
@@ -740,7 +700,7 @@ export default function SponsorIndexList() {
                   >
                     Vidyodaya
                   </Typography>
-                  <Typography variant="body1" paragraph style={style}>
+                  <Typography variant="body2" paragraph style={style}>
                     Created a modern, user-friendly website, boosting online
                     visibility and donations.
                   </Typography>
@@ -780,47 +740,60 @@ export default function SponsorIndexList() {
             Engagement Opportunities
           </Typography>
           <Grid container spacing={isMobile ? 2 : 3}>
-            {[
-              {
-                title: "Sponsor Fair",
-                description:
-                  "Showcase your brand and interact directly with participants at our dedicated Sponsor Fair.",
-              },
-              {
-                title: "Tech Talks & Workshops",
-                description:
-                  "Present your latest technologies and share your expertise through engaging tech talks and hands-on workshops.",
-              },
-              {
-                title: "Branded Challenges",
-                description:
-                  "Create a custom challenge for participants using your technologies, with dedicated prizes for the best solutions.",
-              },
-            ].map((item, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
-                <Card
-                  sx={{
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography
-                      variant="h5"
-                      component="h4"
-                      gutterBottom
-                      style={style}
-                    >
-                      {item.title}
-                    </Typography>
-                    <Typography variant="body1" style={style}>
-                      {item.description}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
+            <Grid item xs={12} sm={6} md={4}>
+              <Card>
+                <CardContent>
+                  <Typography
+                    variant="h5"
+                    component="h4"
+                    gutterBottom
+                    style={style}
+                  >
+                    Sponsor Fair
+                  </Typography>
+                  <Typography variant="body1" paragraph style={style}>
+                    Showcase your brand and interact directly with participants
+                    at our dedicated Sponsor Fair.
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <Card>
+                <CardContent>
+                  <Typography
+                    variant="h5"
+                    component="h4"
+                    gutterBottom
+                    style={style}
+                  >
+                    Tech Talks & Workshops
+                  </Typography>
+                  <Typography variant="body1" paragraph style={style}>
+                    Present your latest technologies and share your expertise
+                    through engaging tech talks and hands-on workshops.
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <Card>
+                <CardContent>
+                  <Typography
+                    variant="h5"
+                    component="h4"
+                    gutterBottom
+                    style={style}
+                  >
+                    Branded Challenges
+                  </Typography>
+                  <Typography variant="body1" paragraph style={style}>
+                    Create a custom challenge for participants using your
+                    technologies, with dedicated prizes for the best solutions.
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
           </Grid>
         </Box>
 

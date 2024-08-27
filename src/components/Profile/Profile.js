@@ -11,7 +11,6 @@ import Checkbox from '@mui/material/Checkbox';
 import ListItemText from '@mui/material/ListItemText';
 import LoginOrRegister from '../LoginOrRegister/LoginOrRegister';
 import HeartGauge from '../HeartGauge/HeartGauge';
-import { initFacebookPixel, trackEvent, set } from '../../lib/ga';
 
 import Head from "next/head";
 import Moment from "react-moment";
@@ -28,7 +27,6 @@ import {
 } from "../../styles/profile/styles";
 import { Link, Typography, useTheme, useMediaQuery } from "@mui/material";
 import HelpUsBuildOHack from "../HelpUsBuildOHack/HelpUsBuildOHack.js";
-import { init } from 'react-facebook-pixel';
 
 export default function Profile(props) {
   const { isLoggedIn, user } = useAuthInfo();
@@ -66,12 +64,6 @@ export default function Profile(props) {
     }
 
     setCompany(profile?.company);    
-
-    initFacebookPixel();
-
-    if (user && user.email) {      
-      set(user.email);
-    }
 
   }, [profile]);
 

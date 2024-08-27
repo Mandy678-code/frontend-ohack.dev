@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import Head from 'next/head';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Typography, Grid, Paper, List, ListItem, ListItemText, Button, ThemeProvider, createTheme } from '@mui/material';
 import { styled } from '@mui/system';
-
+import mermaid from 'mermaid';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import GroupIcon from '@mui/icons-material/Group';
@@ -11,23 +12,6 @@ import BuildIcon from '@mui/icons-material/Build';
 import CodeIcon from '@mui/icons-material/Code';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import { initFacebookPixel, trackEvent } from '../../lib/ga';
-import dynamic from "next/dynamic";
-
-const MermaidDiagram = dynamic(() => import("../../components/MermaidDiagram"), {
-  ssr: false,
-  loading: () => <p>Loading diagram...</p>,
-});
-
-const chart = `
-                graph LR
-                A[Nonprofit Application] --> B[Application Review]
-                B --> C[Nonprofit Selection]
-                C --> D[Problem Refinement]
-                D --> E[Hackathon Event]
-                E --> F[Project Continuation]
-                F --> G[Long-term Impact]
-              `;
-
 
 const theme = createTheme({
   typography: {
@@ -57,6 +41,7 @@ const IconWrapper = styled('div')({
 
 export default function OpportunityHackProcess() {
   useEffect(() => {
+    mermaid.initialize({ startOnLoad: true });
     initFacebookPixel();
   }, []);
 
@@ -98,7 +83,19 @@ export default function OpportunityHackProcess() {
             Opportunity Hack brings together nonprofits, developers, designers, and tech professionals to create innovative solutions for social good. Here's how we make it happen:
           </Typography>
 
-          <MermaidDiagram chart={chart} />
+          <MermaidWrapper>
+            <pre className="mermaid">
+              {`
+                graph LR
+                A[Nonprofit Application] --> B[Application Review]
+                B --> C[Nonprofit Selection]
+                C --> D[Problem Refinement]
+                D --> E[Hackathon Event]
+                E --> F[Project Continuation]
+                F --> G[Long-term Impact]
+              `}
+            </pre>
+          </MermaidWrapper>
         </StyledPaper>
 
         <Grid container spacing={3}>

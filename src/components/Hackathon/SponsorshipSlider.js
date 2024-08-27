@@ -8,7 +8,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   margin: theme.spacing(2, 0),
 }));
 
-const SponsorshipSlider = ({ sponsorLevels, setSelectedAmount }) => {
+const SponsorshipSlider = ({ sponsorLevels }) => {
   const [hours, setHours] = useState(0);
   const [donation, setDonation] = useState(0);
   const [currentLevel, setCurrentLevel] = useState(null);
@@ -22,8 +22,6 @@ const SponsorshipSlider = ({ sponsorLevels, setSelectedAmount }) => {
       .reverse()
       .find(level => totalSupport >= level.minSupport);
     setCurrentLevel(level || null);
-
-    setSelectedAmount(donation);
   }, [hours, donation, sponsorLevels]);
 
   return (

@@ -1,21 +1,19 @@
-import React from "react";
-import { TitleStyled } from "./styles";
-import { Grid } from "@mui/material";
+import React from 'react';
 
+import {
+  TitleStyled,
+  SpanText
+} from './styles';
 
-
-const TitleStyledComponent = () => {
-  return (
-    <Grid mt={1} container spacing={0.5} alignItems="center">
-      <TitleStyled mt={10} component="h2" variant="h2">
-        The place where{" "}
-        <span className="highlight">
-          Nonprofits, Hackers, Mentors, Volunteers
-        </span>{" "}
+const TitleStyledComponent = () => (
+    <TitleStyled>
+      <div class="headline">
+        The place where 
+            <SpanText> Nonprofits, Hackers, Mentors, Volunteers </SpanText>
+        
         unite
-      </TitleStyled>
-    </Grid>
-  );
-};
+        </div>
+    </TitleStyled>
+);
 
 export default TitleStyledComponent;
