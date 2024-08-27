@@ -78,35 +78,39 @@ export default function SponsorIndexList() {
     backgroundColor: '#f0f0f0' 
   };
 
+  const gaButton = (category, action) => {
+    trackEvent( category, action );
+  };
+
+
   const SponsorCard = ({ sponsor, level }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     return (
-      <Paper
-        elevation={3}
-        sx={{
-          p: 2,
-          display: "flex",
-          flexDirection: isMobile ? "column" : "row",
-          alignItems: "center",
-          gap: 2,
-          backgroundColor: level.color,
-          transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
-          "&:hover": {
-            transform: "translateY(-5px)",
-            boxShadow: 6,
-          },
-        }}
-      >
-        <Avatar
-          src={sponsor.logo}
-          alt={sponsor.name}
-          sx={{ width: 80, height: 80, bgcolor: "white" }}
-          variant="rounded"
-        />
-        <Box
-          sx={{ flexGrow: 1, display: "flex", flexDirection: "column", gap: 1 }}
+      <Link href={sponsor.website} passHref>
+        <Paper
+          elevation={3}
+          component="a"
+          target="_blank"
+          rel="noopener noreferrer"
+          sx={{
+            p: 2,
+            display: "flex",
+            flexDirection: isMobile ? "column" : "row",
+            alignItems: "center",
+            gap: 2,
+            backgroundColor: level.color,
+            transition:
+              "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
+            "&:hover": {
+              transform: "translateY(-5px)",
+              boxShadow: 6,
+              cursor: "pointer",
+            },
+            textDecoration: "none",
+            color: "inherit",
+          }}
         >
           <Avatar
             src={sponsor.logo}
@@ -142,11 +146,11 @@ export default function SponsorIndexList() {
               )}
             </Box>
           </Box>
-        </Box>
         </Paper>
+      </Link>
     );
   };
-
+  // get list of sponsors
   const getSponsorCard = (level, nextLevelMinSupport) => {
     const levelSponsors = sponsors.filter((s) => {
       const totalSupport = calculateSupport(s.hours, s.donations);
@@ -262,14 +266,16 @@ export default function SponsorIndexList() {
         <link rel="canonical" href="https://www.ohack.dev/sponsor" />
         <meta name="robots" content="index, follow" />
       </Head>
-      <TitleContainer>
+      <TitleContainer
+        style={{textAlign: 'center'}}
+      >
         <Typography
           variant="h2"
           component="h2"
           gutterBottom
           style={isMobile ? { fontSize: "2rem" } : {}}
         >
-          Sponsor Opportunity Hack
+          <Strong>Sponsor Opportunity Hack</Strong>
         </Typography>
         <Typography variant="h5" component="h2" paragraph style={style}>
           Empower Nonprofits Through Technology
@@ -281,16 +287,27 @@ export default function SponsorIndexList() {
         </Typography>
 
         <Typography variant="h5" gutterBottom>
-          Join us in empowering nonprofits through technology
+          <Strong>Join us in empowering nonprofits through technology</Strong>
         </Typography>
-        <Button
-          variant="contained"
-          color="secondary"
-          size={isMobile ? "medium" : "large"}
-          href={getContactLink()}
-        >
-          Become a Sponsor Today
-        </Button>
+        <Box 
+          sx = {{flexDirection : "row"}}>
+          <Button
+            variant="contained"
+            color="secondary"
+            size={isMobile ? "medium" : "large"}
+            href={getContactLink()}
+          >
+            Sponsor as a Corporate
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            size={isMobile ? "medium" : "large"}
+            href={getContactLink()}
+          >
+            Sponsor as an Individual
+          </Button>
+        </Box>
         <Typography variant="body1" style={{ marginTop: "1rem" }}>
           Limited sponsorship spots available!
         </Typography>
