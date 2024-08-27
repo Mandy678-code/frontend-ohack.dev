@@ -53,7 +53,7 @@ export const TitleBanner = styling(Grid)({
 });
 
 export const TitleContainer = styling(Grid)((props) => ({
-  backgroundColor: "#f5f7f7",
+  backgroundColor: "#009CDE",// #f5f7f7
   padding: "3.5rem 12.5%",
   borderBottom: "1px solid #e7e7e7",
   flexDirection: "column",

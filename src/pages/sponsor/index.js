@@ -76,7 +76,7 @@ export default function SponsorIndexList() {
     fontWeight: 'bold', 
     backgroundColor: '#f0f0f0' 
   };
-
+  // The sponsor boxes that display a sponsor
   const SponsorCard = ({ sponsor, level }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -101,7 +101,7 @@ export default function SponsorIndexList() {
         <Avatar
           src={sponsor.logo}
           alt={sponsor.name}
-          sx={{ width: 80, height: 80, bgcolor: "white" }}
+          sx={{ width: 80, height: 80, objectFit: "contain", bgcolor: "white" }}
           variant="rounded"
         />
         <Box
@@ -138,7 +138,7 @@ export default function SponsorIndexList() {
       </Paper>
     );
   };
-
+  // get list of sponsors
   const getSponsorCard = (level, nextLevelMinSupport) => {
     const levelSponsors = sponsors.filter((s) => {
       const totalSupport = calculateSupport(s.hours, s.donations);
@@ -254,14 +254,16 @@ export default function SponsorIndexList() {
         <link rel="canonical" href="https://www.ohack.dev/sponsor" />
         <meta name="robots" content="index, follow" />
       </Head>
-      <TitleContainer>
+      <TitleContainer
+        style={{textAlign: 'center'}}
+      >
         <Typography
           variant="h2"
           component="h2"
           gutterBottom
           style={isMobile ? { fontSize: "2rem" } : {}}
         >
-          Sponsor Opportunity Hack
+          <Strong>Sponsor Opportunity Hack</Strong>
         </Typography>
         <Typography variant="h5" component="h2" paragraph style={style}>
           Empower Nonprofits Through Technology
@@ -273,16 +275,27 @@ export default function SponsorIndexList() {
         </Typography>
 
         <Typography variant="h5" gutterBottom>
-          Join us in empowering nonprofits through technology
+          <Strong>Join us in empowering nonprofits through technology</Strong>
         </Typography>
-        <Button
-          variant="contained"
-          color="secondary"
-          size={isMobile ? "medium" : "large"}
-          href={getContactLink()}
-        >
-          Become a Sponsor Today
-        </Button>
+        <Box 
+          sx = {{flexDirection : "row"}}>
+          <Button
+            variant="contained"
+            color="secondary"
+            size={isMobile ? "medium" : "large"}
+            href={getContactLink()}
+          >
+            Sponsor as a Corporate
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            size={isMobile ? "medium" : "large"}
+            href={getContactLink()}
+          >
+            Sponsor as an Individual
+          </Button>
+        </Box>
         <Typography variant="body1" style={{ marginTop: "1rem" }}>
           Limited sponsorship spots available!
         </Typography>
