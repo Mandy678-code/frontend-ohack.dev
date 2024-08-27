@@ -12,6 +12,7 @@ import {
   CardActions,
   useTheme,
   useMediaQuery,
+  CardMedia,
 } from "@mui/material";
 import Button from "@mui/material/Button";
 import Table from "@mui/material/Table";
@@ -30,6 +31,8 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import SponsorshipSlider from '../../components/Hackathon/SponsorshipSlider';
+import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
+import { styled } from '@mui/system';
 
 const getContactLink = () => 'https://forms.gle/giowXMQ4h8h6XwVF8';
 
@@ -208,6 +211,40 @@ export default function SponsorIndexList() {
       </Grid>
     );
   };
+  const [anchor, setAnchor] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchor(anchor ? null : event.currentTarget);
+  };
+
+  React.useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (anchor && !anchor.contains(event.currentTarget) && event.currentTarget.getAttribute(id) !== "button_mentor" && event.currentTarget.getAttribute(id) !== "button_judge") {
+        setAnchor(null);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick); 
+    };
+  }, [anchor, setAnchor]);
+
+  const open = Boolean(anchor);
+  const id = open ? 'simple-popper' : undefined;
+  
+  const PopupBody = styled('div')(
+    ({ theme }) => `
+    width: max-content;
+    padding: 12px 16px;
+    margin: 8px;
+    border-radius: 8px;
+    background-color: #FFFFFF;
+    box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.2);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.875rem;
+    z-index: 1;
+  `,
+  );
 
   return (
     <LayoutContainer maxWidth="lg">
@@ -256,6 +293,10 @@ export default function SponsorIndexList() {
       </Head>
       <TitleContainer
         style={{textAlign: 'center'}}
+        // sx={{
+        //   backgroundImage:`url("https://cdn.ohack.dev/ohack.dev/2023_hackathon_4.webp")`,
+        //   backgroundRepeat: "no-repeat",
+        //   backgroundSize: "cover", opacity:"0.8"}}
       >
         <Typography
           variant="h2"
@@ -263,7 +304,7 @@ export default function SponsorIndexList() {
           gutterBottom
           style={isMobile ? { fontSize: "2rem" } : {}}
         >
-          <Strong>Sponsor Opportunity Hack</Strong>
+          <strong>Sponsor Opportunity Hack</strong>
         </Typography>
         <Typography variant="h5" component="h2" paragraph style={style}>
           Empower Nonprofits Through Technology
@@ -275,15 +316,16 @@ export default function SponsorIndexList() {
         </Typography>
 
         <Typography variant="h5" gutterBottom>
-          <Strong>Join us in empowering nonprofits through technology</Strong>
+          <strong>Join us in empowering nonprofits through technology</strong>
         </Typography>
         <Box 
           sx = {{flexDirection : "row"}}>
           <Button
             variant="contained"
-            color="secondary"
+            color="primary"
             size={isMobile ? "medium" : "large"}
             href={getContactLink()}
+            style={{margin:"20px"}}
           >
             Sponsor as a Corporate
           </Button>
@@ -291,28 +333,65 @@ export default function SponsorIndexList() {
             variant="contained"
             color="secondary"
             size={isMobile ? "medium" : "large"}
-            href={getContactLink()}
+            // href={getContactLink()}
+            style={{margin:"20px"}}
+            aria-describedby={id} 
+            type="button" 
+            onClick={handleClick}
           >
             Sponsor as an Individual
           </Button>
+          <BasePopup id={id} open={open} anchor={anchor} placement="right" align="center">
+            <PopupBody>
+              <Typography variant="body1" align="center" style={{ marginTop: "1rem", width:"250px"}}>
+                For more information on what we are looking for, 
+                please click the below button.
+              </Typography>
+              <Grid flexDirection="row">
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  size={isMobile ? "medium" : "large"}
+                  href="/about/mentors"
+                  style={{margin:"20px"}}
+                  id = "button_mentor"
+                >
+                  Become a Mentor
+                </Button>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  size={isMobile ? "medium" : "large"}
+                  href="/about/judges"
+                  style={{margin:"20px"}}
+                  id = "button_judge"
+                >
+                  Become a Judge
+                </Button>
+              </Grid>
+            </PopupBody>
+          </BasePopup>
         </Box>
         <Typography variant="body1" style={{ marginTop: "1rem" }}>
           Limited sponsorship spots available!
         </Typography>
       </TitleContainer>
+      {/*  banner section end---------------------------------------------------------- */}
 
+      {/* Beginning of About----------------------------------------------------------------------------*/}
       <ProjectsContainer>
         <Box mb={isMobile ? 3 : 6}>
-          <Typography
-            variant="h2"
-            component="h2"
-            gutterBottom
-            style={isMobile ? { fontSize: "1.75rem" } : {}}
-          >
-            About Opportunity Hack
-          </Typography>
           <Grid container spacing={isMobile ? 2 : 3}>
             <Grid item xs={12} md={6}>
+              <Typography
+              variant="h2"
+              component="h2"
+              gutterBottom
+              style={isMobile ? { fontSize: "1.75rem" } : {}}
+              marginTop="50px"
+              >
+                About Opportunity Hack
+              </Typography>
               <Typography variant="body1" paragraph style={style}>
                 Opportunity Hack is a premier hackathon that brings together
                 talented students and professionals to create innovative
@@ -347,6 +426,7 @@ export default function SponsorIndexList() {
                   width: "100%",
                   height: isMobile ? "200px" : "300px",
                 }}
+                marginTop="50px"
               >
                 <Image
                   src="https://cdn.ohack.dev/ohack.dev/2023_hackathon_4.webp"
@@ -372,7 +452,9 @@ export default function SponsorIndexList() {
             </Grid>
           </Grid>
         </Box>
-
+        {/* End of About----------------------------------------------------------------------------*/}
+        
+        {/* Beginning of Mentors----------------------------------------------------------------------------*/}
         <Box mb={isMobile ? 3 : 6}>
           <Typography
             variant="h2"
@@ -390,7 +472,7 @@ export default function SponsorIndexList() {
           <Grid container spacing={isMobile ? 1 : 2}>
             <Grid item xs={12} sm={6} md={4}>
               <Card>
-                <CardContent>
+                <CardContent sx={{backgroundColor: 'rgba(0, 156, 222, 0.15)'}}>
                   <Typography variant="h6" style={style}>
                     Tech Giants
                   </Typography>
@@ -402,7 +484,7 @@ export default function SponsorIndexList() {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <Card>
-                <CardContent>
+                <CardContent sx={{backgroundColor: 'rgba(0, 156, 222, 0.15)'}}>
                   <Typography variant="h6" style={style}>
                     Innovative Companies
                   </Typography>
@@ -414,7 +496,7 @@ export default function SponsorIndexList() {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <Card>
-                <CardContent>
+                <CardContent sx={{backgroundColor: 'rgba(0, 156, 222, 0.15)'}}>
                   <Typography variant="h6" style={style}>
                     Academic Institutions
                   </Typography>
@@ -443,7 +525,221 @@ export default function SponsorIndexList() {
             guide, providing unique networking and recruitment opportunities.
           </Typography>
         </Box>
+        {/* End of Mentors Section----------------------------------------------------------------------------*/}
+        <Box mt={isMobile ? 3 : 6}>
+          <Typography
+            variant="h3"
+            component="h3"
+            gutterBottom
+            style={isMobile ? { fontSize: "1.5rem" } : {}}
+          >
+            Why Sponsor Opportunity Hack?
+          </Typography>
+          <Grid container spacing={isMobile ? 2 : 2}>
+            <Grid item xs={12} sm={6}>
+              <Box sx={{backgroundColor: 'rgba(0, 48, 135, 0.2)', padding:'15px' }} borderRadius={4}>
+                <Typography
+                  variant="h5"
+                  component="h4"
+                  gutterBottom
+                  style={style}
+                >
+                  Drive Social Innovation
+                </Typography><Typography variant="body1" paragraph style={style}>
+                    Your support enables tech solutions that address real challenges
+                    faced by nonprofits, amplifying their impact in communities.
+                  </Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Box sx={{backgroundColor: 'rgba(0, 48, 135, 0.2)', padding:'15px' }} borderRadius={4}>
+                <Typography
+                  variant="h5"
+                  component="h4"
+                  gutterBottom
+                  style={style}
+                >
+                  Engage with Passionate Talent
+                </Typography>
+                <Typography variant="body1" paragraph style={style}>
+                  Connect with skilled developers and innovators who are committed
+                  to using technology for social good.
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Box sx={{backgroundColor: 'rgba(0, 48, 135, 0.2)', padding:'15px' }} borderRadius={4}>
+                <Typography
+                  variant="h5"
+                  component="h4"
+                  gutterBottom
+                  style={style}
+                >
+                  Showcase Corporate Social Responsibility
+                </Typography>
+                <Typography variant="body1" paragraph style={style}>
+                  Demonstrate your company's commitment to social causes and
+                  technology-driven solutions for nonprofits.
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Box sx={{backgroundColor: 'rgba(0, 48, 135, 0.2)', padding:'15px' }} borderRadius={4}>
+                <Typography
+                  variant="h5"
+                  component="h4"
+                  gutterBottom
+                  style={style}
+                >
+                  Foster Community Partnerships
+                </Typography>
+                <Typography variant="body1" paragraph style={style}>
+                  Build relationships with nonprofits, tech communities, and
+                  socially-conscious individuals passionate about creating change.
+                </Typography>
+              </Box>
+            </Grid>
+          </Grid>
+        </Box>
+        {/* End of Why----------------------------------------------------------------------------*/}
 
+        {/* Beginning of Success Stories----------------------------------------------------------------------------*/}
+        <Box mt={isMobile ? 3 : 6} mb={8}>
+          <Typography
+            variant="h3"
+            component="h3"
+            gutterBottom
+            style={isMobile ? { fontSize: "1.5rem" } : {}}
+          >
+            Success Stories
+          </Typography>
+          <Typography variant="body1" paragraph style={style}>
+            Our hackathons have led to impactful solutions for nonprofits. See
+            how your sponsorship can make a real difference:
+          </Typography>
+          <Grid container spacing={isMobile ? 2 : 3}>
+            <Grid item xs={12} sm={6} md={4}>
+              <Card>
+                <CardMedia
+                  component="img"
+                  image="https://cdn.ohack.dev/nonprofit_images/matthews_crossing.webp"
+                  alt="Matthews Crossing Food Bank"
+                  layout="fill"
+                  objectFit="cover"
+                  height="250"
+                />
+                <CardContent>
+                  <Typography
+                    variant="h5"
+                    component="h4"
+                    gutterBottom
+                    style={style}
+                  >
+                    <strong>Matthews Crossing Food Bank</strong>
+                  </Typography>
+                
+                  <Typography variant="body2" paragraph style={style}>
+                    Streamlined donation tracking system, saving hundreds of
+                    volunteer hours annually.
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button
+                    size="small"
+                    component={Link}
+                    href="/about/success-stories#matthews-crossing"
+                  >
+                    Read More
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <Card>
+                <CardMedia
+                  component="img"
+                  image="https://cdn.ohack.dev/nonprofit_images/Zuris_Circle_2019.webp"
+                  alt="Zuri's Circle"
+                  layout="fill"
+                  objectFit="cover"
+                  height="250"
+                />
+                <CardContent>
+                  <Typography
+                    variant="h5"
+                    component="h4"
+                    gutterBottom
+                    style={style}
+                  >
+                    <strong>Zuri's Circle</strong>
+                  </Typography>
+                  <Typography variant="body2" paragraph style={style}>
+                    Developed an event management system, increasing volunteer
+                    engagement by 40%.
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button
+                    size="small"
+                    component={Link}
+                    href="/about/success-stories#zuris-circle"
+                  >
+                    Read More
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <Card>
+                <CardMedia
+                  component="img"
+                  image="https://cdn.ohack.dev/nonprofit_images/vidyodaya.webp"
+                  alt="Vidyodaya"
+                  layout="fill"
+                  objectFit="cover"
+                  height="250"
+                />
+                <CardContent>
+                  <Typography
+                    variant="h5"
+                    component="h4"
+                    gutterBottom
+                    style={style}
+                  >
+                    <strong>Vidyodaya</strong>
+                  </Typography>
+                  <Typography variant="body2" paragraph style={style}>
+                    Created a modern, user-friendly website, boosting online
+                    visibility and donations.
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button
+                    size="small"
+                    component={Link}
+                    href="/about/success-stories#vidyodaya"
+                  >
+                    Read More
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
+          </Grid>
+          <Box mt={2} textAlign="center">
+            <Button
+              variant="contained"
+              color="secondary"
+              size={isMobile ? "medium" : "large"}
+              component={Link}
+              href="/about/success-stories"
+            >
+              Explore All Success Stories
+            </Button>
+          </Box>
+        </Box>
+        {/* End of Success Story----------------------------------------------------------------------------*/}
+
+        {/* Beginning of Sponsor Level Display----------------------------------------------------------------------------*/}
         <Typography
           variant="h2"
           component="h2"
@@ -478,7 +774,9 @@ export default function SponsorIndexList() {
             </Grid>
           ))}
         </Grid>
+        {/* End of Sponsor Level Display----------------------------------------------------------------------------*/}
 
+        {/* Beginning of Benefit Calculator----------------------------------------------------------------------------*/}
         <Box mt={isMobile ? 2 : 3} mb={isMobile ? 3 : 6}>
           <Typography
             variant="h2"
@@ -493,7 +791,7 @@ export default function SponsorIndexList() {
             isMobile={isMobile}
           />
         </Box>
-
+        {/* End of Benefit Calculator----------------------------------------------------------------------------*/}
         <Box mt={isMobile ? 3 : 6}>
           <Typography
             variant="h3"
@@ -551,185 +849,9 @@ export default function SponsorIndexList() {
             </Table>
           </TableContainer>
         </Box>
+        {/* End of Benefit Table----------------------------------------------------------------------------*/}
 
-        <Box mt={isMobile ? 3 : 6}>
-          <Typography
-            variant="h3"
-            component="h3"
-            gutterBottom
-            style={isMobile ? { fontSize: "1.5rem" } : {}}
-          >
-            Why Sponsor Opportunity Hack?
-          </Typography>
-          <Grid container spacing={isMobile ? 2 : 3}>
-            <Grid item xs={12} sm={6}>
-              <Typography
-                variant="h5"
-                component="h4"
-                gutterBottom
-                style={style}
-              >
-                Drive Social Innovation
-              </Typography>
-              <Typography variant="body1" paragraph style={style}>
-                Your support enables tech solutions that address real challenges
-                faced by nonprofits, amplifying their impact in communities.
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography
-                variant="h5"
-                component="h4"
-                gutterBottom
-                style={style}
-              >
-                Engage with Passionate Talent
-              </Typography>
-              <Typography variant="body1" paragraph style={style}>
-                Connect with skilled developers and innovators who are committed
-                to using technology for social good.
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography
-                variant="h5"
-                component="h4"
-                gutterBottom
-                style={style}
-              >
-                Showcase Corporate Social Responsibility
-              </Typography>
-              <Typography variant="body1" paragraph style={style}>
-                Demonstrate your company's commitment to social causes and
-                technology-driven solutions for nonprofits.
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography
-                variant="h5"
-                component="h4"
-                gutterBottom
-                style={style}
-              >
-                Foster Community Partnerships
-              </Typography>
-              <Typography variant="body1" paragraph style={style}>
-                Build relationships with nonprofits, tech communities, and
-                socially-conscious individuals passionate about creating change.
-              </Typography>
-            </Grid>
-          </Grid>
-        </Box>
-
-        <Box mt={isMobile ? 3 : 6}>
-          <Typography
-            variant="h3"
-            component="h3"
-            gutterBottom
-            style={isMobile ? { fontSize: "1.5rem" } : {}}
-          >
-            Success Stories
-          </Typography>
-          <Typography variant="body1" paragraph style={style}>
-            Our hackathons have led to impactful solutions for nonprofits. See
-            how your sponsorship can make a real difference:
-          </Typography>
-          <Grid container spacing={isMobile ? 2 : 3}>
-            <Grid item xs={12} sm={6} md={4}>
-              <Card>
-                <CardContent>
-                  <Typography
-                    variant="h5"
-                    component="h4"
-                    gutterBottom
-                    style={style}
-                  >
-                    Matthews Crossing Food Bank
-                  </Typography>
-                  <Typography variant="body2" paragraph style={style}>
-                    Streamlined donation tracking system, saving hundreds of
-                    volunteer hours annually.
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  <Button
-                    size="small"
-                    component={Link}
-                    href="/about/success-stories#matthews-crossing"
-                  >
-                    Read More
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Card>
-                <CardContent>
-                  <Typography
-                    variant="h5"
-                    component="h4"
-                    gutterBottom
-                    style={style}
-                  >
-                    Zuri's Circle
-                  </Typography>
-                  <Typography variant="body2" paragraph style={style}>
-                    Developed an event management system, increasing volunteer
-                    engagement by 40%.
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  <Button
-                    size="small"
-                    component={Link}
-                    href="/about/success-stories#zuris-circle"
-                  >
-                    Read More
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Card>
-                <CardContent>
-                  <Typography
-                    variant="h5"
-                    component="h4"
-                    gutterBottom
-                    style={style}
-                  >
-                    Vidyodaya
-                  </Typography>
-                  <Typography variant="body2" paragraph style={style}>
-                    Created a modern, user-friendly website, boosting online
-                    visibility and donations.
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  <Button
-                    size="small"
-                    component={Link}
-                    href="/about/success-stories#vidyodaya"
-                  >
-                    Read More
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
-          </Grid>
-          <Box mt={2} textAlign="center">
-            <Button
-              variant="contained"
-              color="secondary"
-              size={isMobile ? "medium" : "large"}
-              component={Link}
-              href="/about/success-stories"
-            >
-              Explore All Success Stories
-            </Button>
-          </Box>
-        </Box>
-
+        {/* Beginning of Engagement Opportunities----------------------------------------------------------------------------*/}
         <Box mt={isMobile ? 3 : 6}>
           <Typography
             variant="h3"
@@ -741,7 +863,7 @@ export default function SponsorIndexList() {
           </Typography>
           <Grid container spacing={isMobile ? 2 : 3}>
             <Grid item xs={12} sm={6} md={4}>
-              <Card>
+              <Card style={{height:130}} sx={{backgroundColor: 'rgba(0, 48, 135, 0.2)'}} borderRadius={4}>
                 <CardContent>
                   <Typography
                     variant="h5"
@@ -759,7 +881,7 @@ export default function SponsorIndexList() {
               </Card>
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
-              <Card>
+              <Card style={{height:130}} sx={{backgroundColor: 'rgba(0, 48, 135, 0.2)'}} borderRadius={4}>
                 <CardContent>
                   <Typography
                     variant="h5"
@@ -777,7 +899,7 @@ export default function SponsorIndexList() {
               </Card>
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
-              <Card>
+              <Card style={{height:130}} sx={{backgroundColor: 'rgba(0, 48, 135, 0.2)' }} borderRadius={4}>
                 <CardContent>
                   <Typography
                     variant="h5"
@@ -796,7 +918,7 @@ export default function SponsorIndexList() {
             </Grid>
           </Grid>
         </Box>
-
+        {/* End of Engagement Opportunity----------------------------------------------------------------------------*/}
         <Box mt={isMobile ? 3 : 6} textAlign="center">
           <Typography
             variant="h3"
